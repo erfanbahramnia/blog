@@ -1,0 +1,31 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type UserResponseData {
+  username: String!
+  email: String!
+}
+
+type AuthRegisterResponse {
+  status: Int!
+  message: String!
+  user: UserResponseData!
+  token: String!
+}
+
+type Query {
+  helloWorld: String!
+}
+
+type Mutation {
+  register(user: UserRegister!): AuthRegisterResponse!
+}
+
+input UserRegister {
+  first_name: String!
+  last_name: String!
+  username: String!
+  password: String!
+  email: String!
+}
