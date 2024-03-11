@@ -1,9 +1,9 @@
-import { BadRequestException, HttpStatus, Injectable, InternalServerErrorException } from "@nestjs/common";
+import { BadRequestException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserEntity } from "../entity/user.entity";
 import { Repository } from "typeorm";
 import { IuserData } from "../interface/user.interface";
-import { generateHashPass, generateSalt } from "src/utils/bcrypt";
+import { compareHashPass, generateHashPass, generateSalt } from "src/utils/bcrypt";
 
 @Injectable()
 export class UserService {
@@ -21,7 +21,7 @@ export class UserService {
             ]
         });
         if(checkExist)
-            return new BadRequestException(`${checkExist.email === email ? "email" : "username"} has been used!`);
+            throw new BadRequestException(`${checkExist.email === email ? "email" : "username"} has been used!`);
         // generate salt for hashing pass
         const salt = await generateSalt();
         // generate hash pass
@@ -48,5 +48,25 @@ export class UserService {
         };
     };
 
-
+    async findUserByPassAndUsername(username: string, password: string) {
+        // find by username
+        const user = await this.userRepo.findOneBy({ username });
+        // check user exist
+        if(!user)
+            throw new NotFoundException("User not found!");
+        // check pasword is correct
+        const convertedToHash = await generateHashPass(password, user.salt);
+        const isValid = compareHashPass(user.password, convertedToHash)
+        if(!isValid) 
+            throw new BadRequestException("Password is not valid!");
+        // success
+        return {
+            status: HttpStatus.OK,
+            message: "user founded successfuly",
+            user: {
+                username: user.username,
+                email: user.email,
+            }
+        }
+    }
 }

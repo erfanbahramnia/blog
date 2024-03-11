@@ -7,7 +7,7 @@ type UserResponseData {
   email: String!
 }
 
-type AuthRegisterResponse {
+type AuthResponse {
   status: Int!
   message: String!
   user: UserResponseData!
@@ -15,11 +15,11 @@ type AuthRegisterResponse {
 }
 
 type Query {
-  helloWorld: String!
+  login(username: String!, password: String!): AuthResponse!
 }
 
 type Mutation {
-  register(user: UserRegister!): AuthRegisterResponse!
+  register(user: UserRegister!): AuthResponse!
 }
 
 input UserRegister {

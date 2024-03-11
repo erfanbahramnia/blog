@@ -13,19 +13,28 @@ export class AuthService {
     ) {};
 
     async register(userData: IuserData) {
-        const user = await this.userService.createNewUser(userData);
-        const token = this.generateToken(user)
+        const result = await this.userService.createNewUser(userData);
+        const token = this.generateToken(result.user)
         return {
-            ...user,
+            ...result,
+            token
+        }
+    };
+
+    async login(username: string, password: string) {
+        const result = await this.userService.findUserByPassAndUsername(username, password);
+        const token = await this.generateToken(result.user);
+        return {
+            ...result,
             token
         }
     }
 
-    private async generateToken(user: any): Promise<string> {
+    private async generateToken(user: {email: string, username: string}): Promise<string> {
         const payload = {
             email: user.email,
             username: user.username
         };
         return await this.jwtService.signAsync(payload, { secret: this.configService.get<string>("JWT_SECRET"), expiresIn: "3600s" })
-    }
+    };
 }

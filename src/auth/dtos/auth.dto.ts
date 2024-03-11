@@ -10,7 +10,7 @@ class UserResponseData {
 }
 
 @ObjectType()
-export class AuthRegisterResponse {
+export class AuthResponse {
     @Field((type) => Int)
     status: number;
 

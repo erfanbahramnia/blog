@@ -1,21 +1,24 @@
 import { Args, Query, Mutation, Resolver } from "@nestjs/graphql";
-import { AuthRegisterResponse } from "../dtos/auth.dto";
+import { AuthResponse } from "../dtos/auth.dto";
 import { UserRegister } from "../dtos/auth.input";
 import { AuthService } from "../service/auth.service";
 
-@Resolver(of => AuthRegisterResponse)
+@Resolver(of => AuthResponse)
 export class AuthResolver {
     constructor(
         private readonly authService: AuthService
     ) {}
 
-    @Mutation(returns => AuthRegisterResponse)
+    @Mutation(returns => AuthResponse)
     async register(@Args("user") userData: UserRegister) {
         return this.authService.register(userData);
     };
 
-    @Query(() => String)
-    async helloWorld() {
-        return "Hello World"
+    @Query(returns => AuthResponse)
+    async login(
+        @Args("username") username: string,
+        @Args("password") password: string
+    ) {
+        return this.authService.login(username, password);
     }
 }
