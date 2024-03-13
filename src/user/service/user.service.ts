@@ -147,5 +147,20 @@ export class UserService {
             status: HttpStatus.OK,
             message: "Password updated successfuly"
         }
+    };
+
+    async deleteAccount(id: number) {
+        // delete account
+        const result = await this.userRepo.delete({
+            id
+        });
+        // check account deleted or not
+        if(!result.affected)
+            throw new InternalServerErrorException("could not delete user!");
+        // success
+        return {
+            status: HttpStatus.OK,
+            message: "account deleted succesfuly"
+        };
     }
 }

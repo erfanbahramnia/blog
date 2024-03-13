@@ -12,6 +12,11 @@ type ChnageUserPasswrdRes {
   status: Int!
 }
 
+type DeleteUserType {
+  status: Int!
+  message: String!
+}
+
 type UserResponseData {
   username: String!
   email: String!
@@ -33,6 +38,7 @@ type UserDataDto {
 
 type Query {
   login(username: String!, password: String!): AuthResponse!
+  deleteAccount: DeleteUserType!
   getUsers: [UserDataDto!]!
 }
 
