@@ -4,6 +4,7 @@ import { UserEntity } from "../entity/user.entity";
 import { Repository } from "typeorm";
 import { IuserData } from "../interface/user.interface";
 import { compareHashPass, generateHashPass, generateSalt } from "src/utils/bcrypt";
+import { UserFormalData } from "src/interface/user.interface";
 
 @Injectable()
 export class UserService {
@@ -68,5 +69,16 @@ export class UserService {
                 email: user.email,
             }
         }
+    };
+
+    async getUsers(): Promise<UserFormalData[]> {
+        return await this.userRepo.find({
+            select: {
+                email: true,
+                first_name: true,
+                last_name: true,
+                username: true
+            }
+        })
     }
 }

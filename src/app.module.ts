@@ -11,12 +11,14 @@ import { UserEntity } from './user/entity/user.entity';
 import { join } from 'path';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
     // app modules
     AuthModule,
     UserModule,
+    AdminModule,
     // conf modules
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,

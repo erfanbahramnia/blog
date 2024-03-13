@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
+import { userTokenData } from "src/interface/user.interface";
 import { IUserRepo, IuserData } from "src/user/interface/user.interface";
 import { UserService } from "src/user/service/user.service";
 
@@ -30,7 +31,7 @@ export class AuthService {
         }
     }
 
-    private async generateToken(user: {email: string, username: string}): Promise<string> {
+    private async generateToken(user: userTokenData): Promise<string> {
         const payload = {
             email: user.email,
             username: user.username

@@ -14,8 +14,16 @@ type AuthResponse {
   token: String!
 }
 
+type UserDataDto {
+  email: String!
+  first_name: String!
+  last_name: String!
+  username: String!
+}
+
 type Query {
   login(username: String!, password: String!): AuthResponse!
+  getUsers: [UserDataDto!]!
 }
 
 type Mutation {
