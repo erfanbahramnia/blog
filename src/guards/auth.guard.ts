@@ -40,5 +40,5 @@ export class AuthGuard implements CanActivate {
             // unsuccessful
             throw new UnauthorizedException("Please login to your account");
         }
-    }
+    };
 }

@@ -1,4 +1,4 @@
-import { BadRequestException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { BadRequestException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserEntity } from "../entity/user.entity";
 import { Not, Repository } from "typeorm";
@@ -6,6 +6,7 @@ import { IuserData } from "../interface/user.interface";
 import { compareHashPass, generateHashPass, generateSalt } from "src/utils/bcrypt";
 import { UserFormalData } from "src/interface/user.interface";
 import { UpdateUserInfo } from "../dtos/updateUserInfo.dto";
+import { PasswordsDto } from "../dtos/changePassword.dto";
 
 @Injectable()
 export class UserService {
@@ -114,6 +115,37 @@ export class UserService {
         return {
             status: HttpStatus.OK,
             message: "user updated successfuly"
+        }
+    };
+
+    async changePassword(passwords: PasswordsDto, userId) {
+        // find user
+        const user = await this.userRepo.findOne({
+            where: {
+                id: userId
+            }
+        })
+        // check user exist
+        if(!user)
+            throw new UnauthorizedException("please login to your account")
+        // check pass
+        const convertOldPassToHash = await generateHashPass(passwords.oldPassword, user.salt);
+        const isValid = compareHashPass(convertOldPassToHash, user.password)
+        if(!isValid)
+            throw new BadRequestException("password is not valid");
+        // update pass
+        const newHashPass = await generateHashPass(passwords.newPassword, user.salt);
+        user.password = newHashPass;
+        // save changes
+        const result = await this.userRepo.save(user);
+        // check password changed
+        const isChanged = compareHashPass(newHashPass, result.password);
+        if(!isChanged)
+            throw new InternalServerErrorException("could not change password");
+        // success
+        return {
+            status: HttpStatus.OK,
+            message: "Password updated successfuly"
         }
     }
 }

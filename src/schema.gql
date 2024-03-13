@@ -7,6 +7,11 @@ type UpdateUserDataType {
   status: Int!
 }
 
+type ChnageUserPasswrdRes {
+  message: String!
+  status: Int!
+}
+
 type UserResponseData {
   username: String!
   email: String!
@@ -34,6 +39,7 @@ type Query {
 type Mutation {
   register(user: UserRegister!): AuthResponse!
   updateUserInfo(user: UpdateUserInfo!): UpdateUserDataType!
+  changePassword(data: PasswordsDto!): ChnageUserPasswrdRes!
 }
 
 input UserRegister {
@@ -48,4 +54,9 @@ input UpdateUserInfo {
   first_name: String
   last_name: String
   username: String
+}
+
+input PasswordsDto {
+  oldPassword: String!
+  newPassword: String!
 }
