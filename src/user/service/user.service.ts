@@ -1,7 +1,7 @@
 import { BadRequestException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserEntity } from "../entity/user.entity";
-import { Repository } from "typeorm";
+import { Not, Repository } from "typeorm";
 import { IuserData } from "../interface/user.interface";
 import { compareHashPass, generateHashPass, generateSalt } from "src/utils/bcrypt";
 import { UserFormalData } from "src/interface/user.interface";
@@ -40,11 +40,11 @@ export class UserService {
             throw new InternalServerErrorException("Internal Server Error")
         // success
         return {
-            status: HttpStatus.CREATED,
-            message: "user registered successfuly",
+
             user: {
                 username: result.username,
                 email: result.email,
+                id: result.id
             }
         };
     };
@@ -62,11 +62,10 @@ export class UserService {
             throw new BadRequestException("Password is not valid!");
         // success
         return {
-            status: HttpStatus.OK,
-            message: "user founded successfuly",
             user: {
                 username: user.username,
                 email: user.email,
+                id: user.id
             }
         }
     };
@@ -80,5 +79,5 @@ export class UserService {
                 username: true
             }
         })
-    }
+    };
 }

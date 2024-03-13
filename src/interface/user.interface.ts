@@ -1,6 +1,7 @@
 export type userTokenData = {
     username: string,
-    email: string
+    email: string,
+    id: number
 }
 
 export type UserFormalData = {

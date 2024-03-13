@@ -1,9 +1,13 @@
+// nestjs
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+// graphqo
 import { GqlExecutionContext } from "@nestjs/graphql";
+// configs
 import { JwtService } from "@nestjs/jwt";
-import { Request } from "express";
 import { userTokenData } from "src/interface/user.interface";
+// express
+import { Request } from "express";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -24,7 +28,6 @@ export class AuthGuard implements CanActivate {
         const token = authorization.replace(/bearer/gim, "").trim()
         if(!token)
             throw new UnauthorizedException("Please login to your account")
-        
         // validate token
         try {
             // get user data
