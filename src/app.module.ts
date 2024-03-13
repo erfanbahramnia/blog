@@ -23,6 +23,7 @@ import { AdminModule } from './admin/admin.module';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), "src/schema.gql"),
+      context: ({ req }) => ({ headers: req.headers }),
     }),
     TypeOrmModule.forRoot({
       type: "mysql",

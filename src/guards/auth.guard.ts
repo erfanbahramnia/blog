@@ -17,9 +17,9 @@ export class AuthGuard implements CanActivate {
     ) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
-        const ctx = GqlExecutionContext.create(context)        
+        const ctx = GqlExecutionContext.create(context).getContext()        
         // get req
-        const req: Request = ctx.getContext().req;
+        const req: Request = ctx.req;
         // check authorize
         const { authorization } = req.headers;
         if(!authorization || !authorization.trim())
@@ -33,7 +33,7 @@ export class AuthGuard implements CanActivate {
             // get user data
             const user: userTokenData = await this.jwtService.verifyAsync(token, { secret: this.configService.get<string>("JWT_SECRET")});
             // save user info
-            req["user"] = user;
+            ctx.user = user;
             // success
             return true;
         } catch (error) {

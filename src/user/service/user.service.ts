@@ -5,6 +5,7 @@ import { Not, Repository } from "typeorm";
 import { IuserData } from "../interface/user.interface";
 import { compareHashPass, generateHashPass, generateSalt } from "src/utils/bcrypt";
 import { UserFormalData } from "src/interface/user.interface";
+import { UpdateUserInfo } from "../dtos/updateUserInfo.dto";
 
 @Injectable()
 export class UserService {
@@ -80,4 +81,39 @@ export class UserService {
             }
         })
     };
+
+    async updateUserInfo(newInfo: UpdateUserInfo, userId: number) {
+        // check
+        // check object is not empty
+        if(!newInfo) 
+            throw new BadRequestException("Please send data to update!");
+        // check username is exist befor or not if user want to change it
+        if(newInfo.username) {
+            // find user
+            const checkUsernameExist = await this.userRepo.findOne({
+                where: {
+                    username: newInfo.username,
+                    id: Not(userId)
+                }
+            })
+            if(checkUsernameExist)
+                throw new BadRequestException("username have been used already")
+        };
+        // update data
+        const updateResult = await this.userRepo.createQueryBuilder()
+            .update(UserEntity)
+            .set({
+                ...newInfo
+            })
+            .where("id = :id", { id: userId })
+            .execute()
+        // check update
+        if(!updateResult.affected)
+            throw new InternalServerErrorException("couldn't update any data")
+        // successs
+        return {
+            status: HttpStatus.OK,
+            message: "user updated successfuly"
+        }
+    }
 }
