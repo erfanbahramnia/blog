@@ -162,5 +162,9 @@ export class UserService {
             status: HttpStatus.OK,
             message: "account deleted succesfuly"
         };
+    };
+
+    async findUserById(id: number) {
+        return await this.userRepo.findOneBy({id});
     }
 }

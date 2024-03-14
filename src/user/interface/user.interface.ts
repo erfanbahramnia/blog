@@ -8,5 +8,6 @@ export class IuserData {
 
 export class IUserRepo extends IuserData {
     salt: string;
+    role: string
     id: number
 }

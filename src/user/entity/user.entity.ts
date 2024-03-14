@@ -1,13 +1,15 @@
 // graphql
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 // typeorm
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 // interface
 import { IUserRepo } from "../interface/user.interface";
+import { ArticleEntity } from "src/article/entity/article.entity";
+import { RolesEnum } from "src/constants/constants";
 
 @ObjectType()
 @Entity()
-export class UserEntity extends IUserRepo{
+export class UserEntity extends IUserRepo {
     @Field()
     @Column("varchar")    
     first_name: string;
@@ -31,6 +33,10 @@ export class UserEntity extends IUserRepo{
     @Field()
     @Column("varchar", { unique: true })    
     email: string;
+
+    @Field()
+    @Column("varchar", { default: RolesEnum.User })
+    role: string
 
     @Field(() => Int)
     @PrimaryGeneratedColumn()
