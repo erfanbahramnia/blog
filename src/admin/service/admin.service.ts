@@ -15,13 +15,17 @@ export class AdminService {
 
     async getUsers(): Promise<UserFormalData[]> {
         return await this.userService.getUsers();
-    }
+    };
 
     async getPendingArticlesByStatus(status: string) {
         return await this.articleService.getPendingArticlesByStatus(status);
-    }
+    };
 
     async changeArticleStatus(status: string, id: number) {
         return await this.articleService.changeArticleStatus(status, id);
+    };
+
+    async deleteArticleById(id: number) {
+        return await this.articleService.deleteArticleById(id);
     }
 }

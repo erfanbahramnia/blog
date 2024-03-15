@@ -77,5 +77,22 @@ export class ArticleService {
             status: HttpStatus.OK,
             message: "article's status updated"
         }
+    };
+
+    async deleteArticleById(id: number) {
+        // chekc product exist
+        const checkExist = await this.articleRepo.findOneBy({ id });
+        if(!checkExist)
+            throw new NotFoundException("Product Not Found!");
+        // delete article
+        const result = await this.articleRepo.delete({ id });
+        // check deletion
+        if(!result.affected)
+            throw new InternalServerErrorException("Could not remove article")
+        // sucess
+        return {
+            status: HttpStatus.OK,
+            message: "Article removed sucessfuly"
+        };
     }
 }

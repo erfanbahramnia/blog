@@ -110,6 +110,7 @@ type Mutation {
   changePassword(data: PasswordsDto!): ChnageUserPasswrdRes!
   addArticle(article: AddArticleInputType!): SimpleResponse!
   changeArticleStatus(status: String!, articleId: Int!): SimpleResponse!
+  deleteArticleById(articleId: Int!): SimpleResponse!
   changeUserRole(userId: Int!, role: String!): ChangeRoleResponse!
 }
 

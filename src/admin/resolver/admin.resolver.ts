@@ -58,4 +58,12 @@ export class AdminResolver {
     ) {
         return await this.adminService.changeArticleStatus(status, id)
     }
+
+    @Roles([RolesEnum.Admin])
+    @Mutation(returns => SimpleResponse)
+    async deleteArticleById(
+        @Args("articleId", {type: () => Int}) id: number,
+    ) {
+        return await this.adminService.deleteArticleById( id );
+    }
 }
