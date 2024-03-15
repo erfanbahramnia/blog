@@ -17,8 +17,8 @@ export class AdminService {
         return await this.userService.getUsers();
     }
 
-    async getPendingArticles() {
-        return await this.articleService.getPendingArticles();
+    async getPendingArticlesByStatus(status: string) {
+        return await this.articleService.getPendingArticlesByStatus(status);
     }
 
     async changeArticleStatus(status: string, id: number) {

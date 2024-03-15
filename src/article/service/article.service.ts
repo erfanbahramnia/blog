@@ -46,15 +46,14 @@ export class ArticleService {
         };
     };
 
-    async getPendingArticles() {
+    async getPendingArticlesByStatus(status: string) {
         // get articles with there writers
         return await this.articleRepo.createQueryBuilder("ArticleEntity")
             .leftJoin("ArticleEntity.user", "UserEntity")
             .addSelect(["UserEntity.username", "UserEntity.first_name", "UserEntity.last_name", "UserEntity.email"])
-            .andWhere("ArticleEntity.status = :status", { status: ArticleStatusEnum.Pending })
+            .andWhere("ArticleEntity.status = :status", { status })
             .orderBy("ArticleEntity.createdAt", "ASC")
-            .getMany()
-
+            .getMany();
     };
 
     async changeArticleStatus(status: string, id: number) {

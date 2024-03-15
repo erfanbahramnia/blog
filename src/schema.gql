@@ -99,6 +99,8 @@ type Query {
   deleteAccount: DeleteUserType!
   getUsers: [UserDataDto!]!
   getPendingArticles: [GetPendingArticles!]!
+  getAcceptedArticles: [GetPendingArticles!]!
+  getRejectedArticles: [GetPendingArticles!]!
   getUserInfoByUsername(username: String!): UserEntity!
 }
 

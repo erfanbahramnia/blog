@@ -12,7 +12,7 @@ import { AdminService } from "../service/admin.service";
 // decorators
 import { Roles } from "src/decorator/role.decorator";
 // enums
-import { RolesEnum } from "src/constants/constants";
+import { ArticleStatusEnum, RolesEnum } from "src/constants/constants";
 import { SimpleResponse } from "src/article/dto/article.object-type";
 
 
@@ -32,7 +32,22 @@ export class AdminResolver {
     @Roles([RolesEnum.Admin])
     @Query(returns => [GetPendingArticles])
     async getPendingArticles() {
-        return await this.adminService.getPendingArticles();
+        const status = ArticleStatusEnum.Pending
+        return await this.adminService.getPendingArticlesByStatus(status);
+    };
+
+    @Roles([RolesEnum.Admin])
+    @Query(returns => [GetPendingArticles])
+    async getAcceptedArticles() {
+        const status = ArticleStatusEnum.Accepted
+        return await this.adminService.getPendingArticlesByStatus(status);
+    };
+
+    @Roles([RolesEnum.Admin])
+    @Query(returns => [GetPendingArticles])
+    async getRejectedArticles() {
+        const status = ArticleStatusEnum.Rejected
+        return await this.adminService.getPendingArticlesByStatus(status);
     };
 
     @Roles([RolesEnum.Admin])
