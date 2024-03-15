@@ -1,5 +1,5 @@
 // nestjs
-import { HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { BadRequestException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 // typeorm
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
@@ -55,5 +55,28 @@ export class ArticleService {
             .orderBy("ArticleEntity.createdAt", "ASC")
             .getMany()
 
+    };
+
+    async changeArticleStatus(status: string, id: number) {
+        if(status === ArticleStatusEnum.Pending)
+            throw new BadRequestException("request for change status to Pending status is not valid for article")
+        // check product exist
+        const article = await this.articleRepo.findOneBy({ id });
+        if(!article) 
+            throw new NotFoundException("Article not found!");
+        // check status is valid
+        if(status !== ArticleStatusEnum.Accepted && status !== ArticleStatusEnum.Rejected)
+            throw new BadRequestException("Status is not valid");
+        // update product
+        article.status = status;
+        const res = await this.articleRepo.save(article);
+        // check update
+        if(res.status !== status)
+            throw new InternalServerErrorException("Couldn't update article")
+        // success
+        return {
+            status: HttpStatus.OK,
+            message: "article's status updated"
+        }
     }
 }

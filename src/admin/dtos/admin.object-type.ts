@@ -1,4 +1,4 @@
-import { Field, ObjectType } from "@nestjs/graphql"
+import { Field, Int, ObjectType } from "@nestjs/graphql"
 import { UserInfoInputType } from "src/user/interface/user.object-type"
 
 @ObjectType()
@@ -14,6 +14,9 @@ export class GetPendingArticles {
 
     @Field()
     summary: string
+
+    @Field(() => Int)
+    id: number
 
     @Field(() => UserInfoInputType)
     user: UserInfoInputType

@@ -20,4 +20,8 @@ export class AdminService {
     async getPendingArticles() {
         return await this.articleService.getPendingArticles();
     }
+
+    async changeArticleStatus(status: string, id: number) {
+        return await this.articleService.changeArticleStatus(status, id);
+    }
 }

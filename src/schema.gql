@@ -80,6 +80,7 @@ type GetPendingArticles {
   description: String!
   text: String!
   summary: String!
+  id: Int!
   user: UserInfoInputType!
 }
 
@@ -106,6 +107,7 @@ type Mutation {
   updateUserInfo(user: UpdateUserInfo!): UpdateUserDataType!
   changePassword(data: PasswordsDto!): ChnageUserPasswrdRes!
   addArticle(article: AddArticleInputType!): SimpleResponse!
+  changeArticleStatus(status: String!, articleId: Int!): SimpleResponse!
   changeUserRole(userId: Int!, role: String!): ChangeRoleResponse!
 }
 

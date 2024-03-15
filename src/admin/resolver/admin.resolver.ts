@@ -1,7 +1,7 @@
 // nestjs
 import { UseGuards } from "@nestjs/common";
 // graphql
-import { Query, Resolver } from "@nestjs/graphql";
+import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { UserDataDto } from "../dtos/admin.dto";
 import { GetPendingArticles } from "../dtos/admin.object-type";
 // guards
@@ -13,6 +13,7 @@ import { AdminService } from "../service/admin.service";
 import { Roles } from "src/decorator/role.decorator";
 // enums
 import { RolesEnum } from "src/constants/constants";
+import { SimpleResponse } from "src/article/dto/article.object-type";
 
 
 @UseGuards(AuthGuard, RoleGuard)
@@ -33,4 +34,13 @@ export class AdminResolver {
     async getPendingArticles() {
         return await this.adminService.getPendingArticles();
     };
+
+    @Roles([RolesEnum.Admin])
+    @Mutation(returns => SimpleResponse)
+    async changeArticleStatus(
+        @Args("status") status: string,
+        @Args("articleId", {type: () => Int}) id: number,
+    ) {
+        return await this.adminService.changeArticleStatus(status, id)
+    }
 }
