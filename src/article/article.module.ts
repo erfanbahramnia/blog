@@ -1,5 +1,5 @@
 // nestjs
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 // typeorm
 import { TypeOrmModule } from "@nestjs/typeorm";
 // emtities
@@ -19,7 +19,7 @@ import { UserModule } from "src/user/user.module";
         TypeOrmModule.forFeature([
             ArticleEntity
         ]),
-        UserModule
+        forwardRef(() => UserModule)
     ],
     exports: [
         ArticleService

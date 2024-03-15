@@ -5,7 +5,7 @@ import { AuthGuard } from "src/guards/auth.guard";
 import { UserService } from "../service/user.service";
 import { userTokenData } from "src/interface/user.interface";
 import { ChnageUserPasswrdRes, PasswordsDto } from "../dtos/changePassword.dto";
-import { DeleteUserType } from "../dtos/user.dto";
+import { DeleteUserType, UserArtiles } from "../dtos/user.dto";
 
 @Resolver()
 @UseGuards(AuthGuard)
@@ -34,4 +34,12 @@ export class UserResolver {
     async deleteAccount(@Context("user") user: userTokenData) {
         return this.userService.deleteAccount(user.id);
     };
+
+    @Query(returns => UserArtiles) 
+    async getUserArticles(@Context("user") user: userTokenData) {
+        // get user id
+        const { id } = user;
+        // get articles
+        return await this.userService.getUserArticles(id);
+    }
 }

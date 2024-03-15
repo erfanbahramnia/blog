@@ -1,4 +1,4 @@
-import { BadRequestException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, HttpStatus, Inject, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException, forwardRef } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserEntity } from "../entity/user.entity";
 import { Not, Repository } from "typeorm";
@@ -8,11 +8,13 @@ import { UserFormalData } from "src/interface/user.interface";
 import { UpdateUserInfo } from "../dtos/updateUserInfo.dto";
 import { PasswordsDto } from "../dtos/changePassword.dto";
 import { RolesEnum } from "src/constants/constants";
+import { ArticleService } from "src/article/service/article.service";
 
 @Injectable()
 export class UserService {
     constructor(
         @InjectRepository(UserEntity) private readonly userRepo: Repository<UserEntity>,
+        @Inject(forwardRef(() => ArticleService)) private readonly articleService: ArticleService
     ) {};
 
     async createNewUser(userData: IuserData) {
@@ -189,5 +191,9 @@ export class UserService {
 
     async getFullUserInfoByUsername(username: string) {
         return await this.userRepo.findOneBy({ username })
+    };
+
+    async getUserArticles(userId: number) {
+        return await this.articleService.getUserArticles(userId);
     }
 }

@@ -1,23 +1,9 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql"
+import { ArticlesData } from "src/user/dtos/user.dto"
 import { UserInfoInputType } from "src/user/interface/user.object-type"
 
 @ObjectType()
-export class GetPendingArticles {
-    @Field()
-    title: string
-
-    @Field()
-    description: string
-
-    @Field()
-    text: string
-
-    @Field()
-    summary: string
-
-    @Field(() => Int)
-    id: number
-
+export class GetArticles extends ArticlesData {
     @Field(() => UserInfoInputType)
     user: UserInfoInputType
 }

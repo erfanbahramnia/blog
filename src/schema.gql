@@ -49,6 +49,29 @@ type DeleteUserType {
   message: String!
 }
 
+type ArticlesData {
+  title: String!
+  description: String!
+  text: String!
+  summary: String!
+  id: Int!
+}
+
+type UserArtilesSeperatedByStatus {
+  pendingArticles: [ArticlesData!]!
+  acceptedArticles: [ArticlesData!]!
+  rejectedArticles: [ArticlesData!]!
+}
+
+type UserArtiles {
+  articles: UserArtilesSeperatedByStatus!
+}
+
+type SimpleResponse {
+  status: Int!
+  message: String!
+}
+
 type UserResponseData {
   username: String!
   email: String!
@@ -75,18 +98,13 @@ type UserInfoInputType {
   email: String!
 }
 
-type GetPendingArticles {
+type GetArticles {
   title: String!
   description: String!
   text: String!
   summary: String!
   id: Int!
   user: UserInfoInputType!
-}
-
-type SimpleResponse {
-  status: Int!
-  message: String!
 }
 
 type ChangeRoleResponse {
@@ -97,10 +115,11 @@ type ChangeRoleResponse {
 type Query {
   login(username: String!, password: String!): AuthResponse!
   deleteAccount: DeleteUserType!
+  getUserArticles: UserArtiles!
   getUsers: [UserDataDto!]!
-  getPendingArticles: [GetPendingArticles!]!
-  getAcceptedArticles: [GetPendingArticles!]!
-  getRejectedArticles: [GetPendingArticles!]!
+  getPendingArticles: [GetArticles!]!
+  getAcceptedArticles: [GetArticles!]!
+  getRejectedArticles: [GetArticles!]!
   getUserInfoByUsername(username: String!): UserEntity!
 }
 

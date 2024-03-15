@@ -3,7 +3,7 @@ import { UseGuards } from "@nestjs/common";
 // graphql
 import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { UserDataDto } from "../dtos/admin.dto";
-import { GetPendingArticles } from "../dtos/admin.object-type";
+import { GetArticles } from "../dtos/admin.object-type";
 // guards
 import { AuthGuard } from "src/guards/auth.guard";
 import { RoleGuard } from "src/guards/role.guard";
@@ -30,21 +30,21 @@ export class AdminResolver {
     };
 
     @Roles([RolesEnum.Admin])
-    @Query(returns => [GetPendingArticles])
+    @Query(returns => [GetArticles])
     async getPendingArticles() {
         const status = ArticleStatusEnum.Pending
         return await this.adminService.getPendingArticlesByStatus(status);
     };
 
     @Roles([RolesEnum.Admin])
-    @Query(returns => [GetPendingArticles])
+    @Query(returns => [GetArticles])
     async getAcceptedArticles() {
         const status = ArticleStatusEnum.Accepted
         return await this.adminService.getPendingArticlesByStatus(status);
     };
 
     @Roles([RolesEnum.Admin])
-    @Query(returns => [GetPendingArticles])
+    @Query(returns => [GetArticles])
     async getRejectedArticles() {
         const status = ArticleStatusEnum.Rejected
         return await this.adminService.getPendingArticlesByStatus(status);
@@ -65,5 +65,5 @@ export class AdminResolver {
         @Args("articleId", {type: () => Int}) id: number,
     ) {
         return await this.adminService.deleteArticleById( id );
-    }
+    };
 }

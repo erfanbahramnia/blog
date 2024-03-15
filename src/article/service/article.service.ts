@@ -1,5 +1,5 @@
 // nestjs
-import { BadRequestException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { BadRequestException, HttpStatus, Inject, Injectable, InternalServerErrorException, NotFoundException, forwardRef } from "@nestjs/common";
 // typeorm
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
@@ -16,7 +16,7 @@ import { ArticleStatusEnum } from "src/constants/constants";
 export class ArticleService {
     constructor(
         @InjectRepository(ArticleEntity) private readonly articleRepo: Repository<ArticleEntity>,
-        private readonly userService: UserService
+        @Inject(forwardRef(() => UserService)) private readonly userService: UserService
     ) {};
 
     async addArticle(data: AddArticleInputType, userId: number) {
@@ -46,7 +46,7 @@ export class ArticleService {
         };
     };
 
-    async getPendingArticlesByStatus(status: string) {
+    async getArticlesByStatus(status: string) {
         // get articles with there writers
         return await this.articleRepo.createQueryBuilder("ArticleEntity")
             .leftJoin("ArticleEntity.user", "UserEntity")
@@ -55,6 +55,16 @@ export class ArticleService {
             .orderBy("ArticleEntity.createdAt", "ASC")
             .getMany();
     };
+
+    async getUserArticlesByStatus(status: string, id: number) {
+        // get articles with there writers
+        return await this.articleRepo.createQueryBuilder("ArticleEntity")
+            .leftJoin("ArticleEntity.user", "UserEntity")
+            .andWhere("ArticleEntity.status = :status", { status })
+            .andWhere("UserEntity.id = :id", { id })
+            .orderBy("ArticleEntity.createdAt", "DESC")
+            .getMany();
+    };    
 
     async changeArticleStatus(status: string, id: number) {
         if(status === ArticleStatusEnum.Pending)
@@ -94,5 +104,27 @@ export class ArticleService {
             status: HttpStatus.OK,
             message: "Article removed sucessfuly"
         };
+    };
+
+    async getUserArticles(userId: number) {
+        try {
+            // get user's article with pending status
+            const pendingArticles = await this.getUserArticlesByStatus(ArticleStatusEnum.Pending, userId);
+            // get user's article with accepted status
+            const acceptedArticles = await this.getUserArticlesByStatus(ArticleStatusEnum.Accepted, userId);
+            // get user's article with rejected status
+            const rejectedArticles = await this.getUserArticlesByStatus(ArticleStatusEnum.Rejected, userId);
+            // success
+            return {
+                articles: {
+                    pendingArticles,
+                    acceptedArticles,
+                    rejectedArticles
+                }
+            }
+        } catch (error) {
+            console.log(error);
+            throw new InternalServerErrorException("InternalServerError");
+        }
     }
 }
