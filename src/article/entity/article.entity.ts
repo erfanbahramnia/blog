@@ -1,7 +1,11 @@
+// graphql
 import { Field, Int, ObjectType } from "@nestjs/graphql";
+// enums
 import { ArticleStatusEnum } from "src/constants/constants";
+// entities
 import { UserEntity } from "src/user/entity/user.entity";
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+// typeorm
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 @ObjectType()
@@ -31,6 +35,10 @@ export class ArticleEntity {
         cascade: true
     })
     user: UserEntity
+
+    @Field(() => Date)
+    @CreateDateColumn({type: "timestamp"})
+    createdAt: Date;
 
     @Field(() => Int)
     @PrimaryGeneratedColumn()

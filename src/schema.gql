@@ -9,10 +9,16 @@ type ArticleEntity {
   summary: String!
   status: String!
   user: UserEntity!
+  createdAt: DateTime!
   id: Int!
   like: [UserEntity!]!
   dislike: [UserEntity!]!
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type UserEntity {
   first_name: String!
@@ -62,6 +68,21 @@ type UserDataDto {
   username: String!
 }
 
+type UserInfoInputType {
+  first_name: String!
+  last_name: String!
+  username: String!
+  email: String!
+}
+
+type GetPendingArticles {
+  title: String!
+  description: String!
+  text: String!
+  summary: String!
+  user: UserInfoInputType!
+}
+
 type SimpleResponse {
   status: Int!
   message: String!
@@ -76,6 +97,7 @@ type Query {
   login(username: String!, password: String!): AuthResponse!
   deleteAccount: DeleteUserType!
   getUsers: [UserDataDto!]!
+  getPendingArticles: [GetPendingArticles!]!
   getUserInfoByUsername(username: String!): UserEntity!
 }
 

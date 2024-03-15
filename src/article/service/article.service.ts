@@ -2,11 +2,15 @@
 import { HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 // typeorm
 import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 // entities
 import { ArticleEntity } from "../entity/article.entity";
+// graphql
 import { AddArticleInputType } from "../dto/article.input-type";
+// services
 import { UserService } from "src/user/service/user.service";
-import { Repository } from "typeorm";
+// enums
+import { ArticleStatusEnum } from "src/constants/constants";
 
 @Injectable()
 export class ArticleService {
@@ -40,5 +44,16 @@ export class ArticleService {
             status: HttpStatus.CREATED,
             message: "article added successfuly"
         };
+    };
+
+    async getPendingArticles() {
+        // get articles with there writers
+        return await this.articleRepo.createQueryBuilder("ArticleEntity")
+            .leftJoin("ArticleEntity.user", "UserEntity")
+            .addSelect(["UserEntity.username", "UserEntity.first_name", "UserEntity.last_name", "UserEntity.email"])
+            .andWhere("ArticleEntity.status = :status", { status: ArticleStatusEnum.Pending })
+            .orderBy("ArticleEntity.createdAt", "ASC")
+            .getMany()
+
     }
 }

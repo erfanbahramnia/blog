@@ -1,7 +1,11 @@
+// nestjs
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
+// graphql
 import { GqlExecutionContext } from "@nestjs/graphql";
+// enums
 import { Roles } from "src/decorator/role.decorator";
+// services
 import { UserService } from "src/user/service/user.service";
 
 @Injectable()
@@ -17,9 +21,6 @@ export class RoleGuard implements CanActivate {
         // get user role
         const { user } = await GqlExecutionContext.create(ctx).getContext();
         const { role: userRole } = await this.userService.findUserById(user.id)
-        console.log(userRole);
-        console.log(roles);
-        
         // check access
         for (const validRole of roles) {
             // success
