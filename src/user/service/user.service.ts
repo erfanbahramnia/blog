@@ -7,6 +7,7 @@ import { compareHashPass, generateHashPass, generateSalt } from "src/utils/bcryp
 import { UserFormalData } from "src/interface/user.interface";
 import { UpdateUserInfo } from "../dtos/updateUserInfo.dto";
 import { PasswordsDto } from "../dtos/changePassword.dto";
+import { RolesEnum } from "src/constants/constants";
 
 @Injectable()
 export class UserService {
@@ -166,5 +167,27 @@ export class UserService {
 
     async findUserById(id: number) {
         return await this.userRepo.findOneBy({id});
+    };
+
+    async changeUserRole(id: number, role: string) {
+        // check user has already have the same role with new one
+        const user = await this.userRepo.findOneBy({id})
+        if(user.role === role)
+            throw new BadRequestException("Role have already changed for user")
+        // change role
+        user.role = role;
+        await this.userRepo.save(user);
+        // check role updated or not
+        if(user.role !== role)
+            throw new InternalServerErrorException("Could not change role of user");
+        // success
+        return {
+            status: HttpStatus.OK,
+            message: "Role updated successfuly"
+        }
+    };
+
+    async getFullUserInfoByUsername(username: string) {
+        return await this.userRepo.findOneBy({ username })
     }
 }

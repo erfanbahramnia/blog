@@ -2,6 +2,32 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type ArticleEntity {
+  title: String!
+  description: String!
+  text: String!
+  summary: String!
+  status: String!
+  user: UserEntity!
+  id: Int!
+  like: [UserEntity!]!
+  dislike: [UserEntity!]!
+}
+
+type UserEntity {
+  first_name: String!
+  last_name: String!
+  username: String!
+  password: String!
+  salt: String!
+  email: String!
+  role: String!
+  id: Int!
+  article: [ArticleEntity!]!
+  like: [ArticleEntity!]!
+  dislike: [ArticleEntity!]!
+}
+
 type UpdateUserDataType {
   message: String!
   status: Int!
@@ -36,16 +62,29 @@ type UserDataDto {
   username: String!
 }
 
+type SimpleResponse {
+  status: Int!
+  message: String!
+}
+
+type ChangeRoleResponse {
+  status: Int!
+  message: String!
+}
+
 type Query {
   login(username: String!, password: String!): AuthResponse!
   deleteAccount: DeleteUserType!
   getUsers: [UserDataDto!]!
+  getUserInfoByUsername(username: String!): UserEntity!
 }
 
 type Mutation {
   register(user: UserRegister!): AuthResponse!
   updateUserInfo(user: UpdateUserInfo!): UpdateUserDataType!
   changePassword(data: PasswordsDto!): ChnageUserPasswrdRes!
+  addArticle(article: AddArticleInputType!): SimpleResponse!
+  changeUserRole(userId: Int!, role: String!): ChangeRoleResponse!
 }
 
 input UserRegister {
@@ -65,4 +104,11 @@ input UpdateUserInfo {
 input PasswordsDto {
   oldPassword: String!
   newPassword: String!
+}
+
+input AddArticleInputType {
+  title: String!
+  description: String!
+  text: String!
+  summary: String!
 }

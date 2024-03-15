@@ -41,4 +41,16 @@ export class UserEntity extends IUserRepo {
     @Field(() => Int)
     @PrimaryGeneratedColumn()
     id: number;
+
+    @Field(() => [ArticleEntity])
+    @OneToMany(() => ArticleEntity, (articleEntity) => articleEntity.user)
+    article: ArticleEntity[];
+
+    @Field(() => [ArticleEntity])
+    @ManyToMany(() => ArticleEntity, (articleEntity) => articleEntity.like)
+    like: ArticleEntity[];
+
+    @Field(() => [ArticleEntity])
+    @ManyToMany(() => ArticleEntity, (articleEntity) => articleEntity.dislike)
+    dislike: ArticleEntity[];
 }

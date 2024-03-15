@@ -12,7 +12,7 @@ import { DeleteUserType } from "../dtos/user.dto";
 export class UserResolver {
     constructor(
         private readonly userService: UserService
-    ) {}
+    ) {};
 
     @Mutation(returns => UpdateUserDataType)
     async updateUserInfo(@Args("user") newInfo: UpdateUserInfo, @Context("user") user: userTokenData) {
@@ -20,7 +20,7 @@ export class UserResolver {
         const { id } = user
         // update
         return await this.userService.updateUserInfo(newInfo, id);   
-    }
+    };
 
     @Mutation(returns => ChnageUserPasswrdRes)
     async changePassword(@Args("data") passwords: PasswordsDto, @Context("user") user: userTokenData) {
@@ -28,10 +28,10 @@ export class UserResolver {
         const { id } = user;
         // update
         return await this.userService.changePassword(passwords, id);
-    }
+    };
 
     @Query(returns => DeleteUserType)
     async deleteAccount(@Context("user") user: userTokenData) {
         return this.userService.deleteAccount(user.id);
-    }
+    };
 }

@@ -4,21 +4,28 @@ import { Module } from '@nestjs/common';
 // config modules
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 // app modules
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
-import { UserEntity } from './user/entity/user.entity';
-import { join } from 'path';
-import { ConfigModule } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
 import { AdminModule } from './admin/admin.module';
+import { ArticleModule } from './article/article.module';
+import { DeveloperModule } from './developer/developer.module';
+// utils
+import { join } from 'path';
+// entities
+import { UserEntity } from './user/entity/user.entity';
+import { ArticleEntity } from './article/entity/article.entity';
 
 @Module({
   imports: [
     // app modules
     AuthModule,
     UserModule,
+    ArticleModule,
     AdminModule,
+    DeveloperModule,
     // conf modules
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
@@ -33,7 +40,8 @@ import { AdminModule } from './admin/admin.module';
       password: "erfan.81",
       database: "blog",
       entities: [
-        UserEntity
+        UserEntity,
+        ArticleEntity
       ],
       synchronize: true,
       autoLoadEntities: true
