@@ -50,7 +50,11 @@ export class ArticleService {
         // get articles with there writers
         return await this.articleRepo.createQueryBuilder("ArticleEntity")
             .leftJoin("ArticleEntity.user", "UserEntity")
+            .leftJoin("ArticleEntity.like", "Likes")
+            .leftJoin("ArticleEntity.dislike", "DisLikes")
             .addSelect(["UserEntity.username", "UserEntity.first_name", "UserEntity.last_name", "UserEntity.email"])
+            .addSelect(["Likes.username", "Likes.first_name", "Likes.last_name", "Likes.email"])
+            .addSelect(["DisLikes.username", "DisLikes.first_name", "DisLikes.last_name", "DisLikes.email"])
             .andWhere("ArticleEntity.status = :status", { status })
             .orderBy("ArticleEntity.createdAt", "ASC")
             .getMany();
@@ -59,9 +63,13 @@ export class ArticleService {
     async getUserArticlesByStatus(status: string, id: number) {
         // get articles with there writers
         return await this.articleRepo.createQueryBuilder("ArticleEntity")
-            .leftJoin("ArticleEntity.user", "UserEntity")
+            .leftJoin("ArticleEntity.user", "User")
+            .leftJoin("ArticleEntity.like", "Likes")
+            .leftJoin("ArticleEntity.dislike", "Dislikes")
             .andWhere("ArticleEntity.status = :status", { status })
-            .andWhere("UserEntity.id = :id", { id })
+            .andWhere("User.id = :id", { id })
+            .addSelect(["Likes.first_name", "Likes.last_name", "Likes.username", "Likes.email",])
+            .addSelect(["Dislikes.first_name", "Dislikes.last_name", "Dislikes.username", "Dislikes.email",])
             .orderBy("ArticleEntity.createdAt", "DESC")
             .getMany();
     };    
@@ -164,6 +172,49 @@ export class ArticleService {
         return {
             status: HttpStatus.OK,
             message: "Article removed successfuly"
-        }
+        };
+    };
+
+    async likeArticle(articleId: number, userId: number) {
+        // find user
+        const user = await this.userService.findUserById(userId);
+        // check user exist
+        if(!user) 
+            throw new NotFoundException("User not found!");
+        // find article
+        const article = await this.articleRepo.findOne({
+            where: {
+                id: articleId
+            },
+            relations: {
+                like: true,
+                dislike: true
+            }
+        });
+        // check article status
+        if(article.status !== ArticleStatusEnum.Accepted)
+            throw new BadRequestException("Article not Found!");
+        // check article exist
+        if(!article) 
+            throw new NotFoundException("Article not found!");
+        // check alread liked
+        const articleLiked = article.like.map(item => item.id === user.id);
+        if(articleLiked)
+            throw new BadRequestException("User already liked the article");
+        // remove user from dislike if exist
+        article.dislike = article.dislike.filter(item => item.id !== user.id);
+        // make relation with article and user
+        article.like.push(user);
+        // save changes
+        const updatedArticle = await this.articleRepo.save((article));
+        // check update
+        const checkLike = updatedArticle.like.map(item => item.id === user.id);
+        if(!checkLike)
+            throw new InternalServerErrorException("Internal server error");        
+        // success
+        return {
+            status: HttpStatus.OK,
+            message: "article updated successfuly"
+        };
     }
 }

@@ -1,4 +1,5 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { UserInfoInputType } from "./user.object-type";
 
 @ObjectType()
 export class DeleteUserType {
@@ -22,6 +23,12 @@ export class ArticlesData {
     
     @Field()
     summary: string
+
+    @Field(() => [UserInfoInputType])    
+    like: UserInfoInputType[]
+
+    @Field(() => [UserInfoInputType])    
+    dislike: UserInfoInputType[]
     
     @Field(() => Int)
     id: number

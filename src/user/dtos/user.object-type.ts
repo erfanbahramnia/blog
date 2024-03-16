@@ -1,5 +1,5 @@
 import { Field, ObjectType } from "@nestjs/graphql";
-import { UserInfo } from "./user.interface";
+import { UserInfo } from "../interface/user.interface";
 
 @ObjectType()
 export class UserInfoInputType implements UserInfo {

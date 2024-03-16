@@ -44,6 +44,13 @@ type ChnageUserPasswrdRes {
   status: Int!
 }
 
+type UserInfoInputType {
+  first_name: String!
+  last_name: String!
+  username: String!
+  email: String!
+}
+
 type DeleteUserType {
   status: Int!
   message: String!
@@ -54,6 +61,8 @@ type ArticlesData {
   description: String!
   text: String!
   summary: String!
+  like: [UserInfoInputType!]!
+  dislike: [UserInfoInputType!]!
   id: Int!
 }
 
@@ -91,18 +100,13 @@ type UserDataDto {
   username: String!
 }
 
-type UserInfoInputType {
-  first_name: String!
-  last_name: String!
-  username: String!
-  email: String!
-}
-
 type GetArticles {
   title: String!
   description: String!
   text: String!
   summary: String!
+  like: [UserInfoInputType!]!
+  dislike: [UserInfoInputType!]!
   id: Int!
   user: UserInfoInputType!
 }
@@ -129,6 +133,7 @@ type Mutation {
   updateUserInfo(user: UpdateUserInfo!): UpdateUserDataType!
   changePassword(data: PasswordsDto!): ChnageUserPasswrdRes!
   addArticle(article: AddArticleInputType!): SimpleResponse!
+  likeArticle(articleId: Int!): SimpleResponse!
   changeArticleStatus(status: String!, articleId: Int!): SimpleResponse!
   deleteArticleById(articleId: Int!): SimpleResponse!
   deleteArticleByAdmin(articleId: Int!): SimpleResponse!

@@ -5,7 +5,7 @@ import { ArticleService } from "../service/article.service";
 // guards
 import { AuthGuard } from "src/guards/auth.guard";
 // graphql
-import { Args, Context, Mutation, Resolver } from "@nestjs/graphql";
+import { Args, Context, Int, Mutation, Resolver } from "@nestjs/graphql";
 // garphql object type
 import { SimpleResponse } from "../dto/article.object-type";
 // garphql input types
@@ -30,4 +30,13 @@ export class ArticleResolver {
         // add article
         return this.articleService.addArticle(article, id);
     };
+
+    @UseGuards(AuthGuard)
+    @Mutation(returns => SimpleResponse)
+    async likeArticle(
+        @Args("articleId", { type: () => Int }) articleId: number,
+        @Context("user") { id: userId }: userTokenData
+    ) {
+        return await this.articleService.likeArticle(articleId, userId);
+    }
 }
