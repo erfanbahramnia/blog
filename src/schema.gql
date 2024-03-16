@@ -116,6 +116,7 @@ type Query {
   login(username: String!, password: String!): AuthResponse!
   deleteAccount: DeleteUserType!
   getUserArticles: UserArtiles!
+  deleteArticle(articleId: Int!): SimpleResponse!
   getUsers: [UserDataDto!]!
   getPendingArticles: [GetArticles!]!
   getAcceptedArticles: [GetArticles!]!

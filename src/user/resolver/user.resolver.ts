@@ -1,11 +1,12 @@
 import { UseGuards } from "@nestjs/common";
-import { Args, Context, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { Args, Context, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { UpdateUserDataType, UpdateUserInfo } from "../dtos/updateUserInfo.dto";
 import { AuthGuard } from "src/guards/auth.guard";
 import { UserService } from "../service/user.service";
 import { userTokenData } from "src/interface/user.interface";
 import { ChnageUserPasswrdRes, PasswordsDto } from "../dtos/changePassword.dto";
 import { DeleteUserType, UserArtiles } from "../dtos/user.dto";
+import { SimpleResponse } from "src/article/dto/article.object-type";
 
 @Resolver()
 @UseGuards(AuthGuard)
@@ -41,5 +42,13 @@ export class UserResolver {
         const { id } = user;
         // get articles
         return await this.userService.getUserArticles(id);
+    };
+
+    @Query(returns => SimpleResponse)
+    async deleteArticle(
+        @Args("articleId", {type: () => Int}) articleId: number,
+        @Context("user") { id: userId }: userTokenData
+    ) {
+        return this.userService.deleteArticle(articleId, userId);
     }
 }

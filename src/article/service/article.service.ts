@@ -126,5 +126,27 @@ export class ArticleService {
             console.log(error);
             throw new InternalServerErrorException("InternalServerError");
         }
+    };
+
+    async deleteArticleByUser(articleId: number, userId: number) {
+        // check article exist
+        const article = await this.articleRepo
+            .createQueryBuilder()
+            .leftJoin("ArticleEntity.user", "UserEntity")
+            .andWhere("UserEntity.id = :userId", { userId })
+            .andWhere("ArticleEntity.id = :articleId", { articleId })
+            .getOne();
+        if(!article)
+            throw new NotFoundException("Article does not exist");
+        // delete article
+        const result = await this.articleRepo.delete({ id: articleId });
+        // chekc delete result
+        if(!result.affected)
+            throw new InternalServerErrorException("Could not delete article")
+        // success
+        return {
+            status: HttpStatus.OK,
+            message: "Article removed successfuly"
+        };
     }
 }

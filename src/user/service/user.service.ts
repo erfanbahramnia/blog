@@ -196,4 +196,8 @@ export class UserService {
     async getUserArticles(userId: number) {
         return await this.articleService.getUserArticles(userId);
     }
+
+    async deleteArticle(articleId: number, userId: number) {
+        return this.articleService.deleteArticleByUser(articleId, userId)
+    }
 }
