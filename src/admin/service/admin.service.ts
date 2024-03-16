@@ -27,5 +27,9 @@ export class AdminService {
 
     async deleteArticleById(id: number) {
         return await this.articleService.deleteArticleById(id);
-    }
+    };
+
+    async deleteArticleByAdmin(articleId: number) {
+        return await this.articleService.deleteArticleByAdmin(articleId);
+    };
 }

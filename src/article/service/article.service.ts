@@ -148,5 +148,22 @@ export class ArticleService {
             status: HttpStatus.OK,
             message: "Article removed successfuly"
         };
+    };
+
+    async deleteArticleByAdmin(articleId: number) {
+        // check article exist
+        const article = await this.articleRepo.findOneBy({ id: articleId });
+        if(!article)
+            throw new NotFoundException("Article does not exist!");
+        // delete article
+        const result = await this.articleRepo.delete({ id: articleId });
+        // check deletion result
+        if(!result.affected)
+            throw new InternalServerErrorException("Could not delete article!");
+        // success
+        return {
+            status: HttpStatus.OK,
+            message: "Article removed successfuly"
+        }
     }
 }
