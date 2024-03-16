@@ -191,12 +191,12 @@ export class ArticleService {
                 dislike: true
             }
         });
+        // check article exist
+        if(!article) 
+        throw new NotFoundException("Article not found!");
         // check article status
         if(article.status !== ArticleStatusEnum.Accepted)
             throw new BadRequestException("Article not Found!");
-        // check article exist
-        if(!article) 
-            throw new NotFoundException("Article not found!");
         // check alread liked
         const articleLiked = article.like.map(item => item.id === user.id);
         if(articleLiked)
@@ -216,5 +216,48 @@ export class ArticleService {
             status: HttpStatus.OK,
             message: "article updated successfuly"
         };
-    }
+    };
+
+    async dislikeArticle(articleId: number, userId: number) {
+        // find user
+        const user = await this.userService.findUserById(userId);
+        // check user exist
+        if(!user) 
+            throw new NotFoundException("User not found!");
+        // find article
+        const article = await this.articleRepo.findOne({
+            where: {
+                id: articleId
+            },
+            relations: {
+                like: true,
+                dislike: true
+            }
+        });
+        // check article exist
+        if(!article) 
+        throw new NotFoundException("Article not found!");
+        // check article status
+        if(article.status !== ArticleStatusEnum.Accepted)
+            throw new BadRequestException("Article not Found!");
+        // check alread disliked
+        const articleDisLiked = article.dislike.map(item => item.id === user.id);
+        if(articleDisLiked)
+            throw new BadRequestException("User already disliked the article");
+        // remove user from like if exist
+        article.like = article.like.filter(item => item.id !== user.id);
+        // make relation with article and user
+        article.dislike.push(user);
+        // save changes
+        const updatedArticle = await this.articleRepo.save((article));
+        // check update
+        const checkDisLike = updatedArticle.dislike.map(item => item.id === user.id);
+        if(!checkDisLike)
+            throw new InternalServerErrorException("Internal server error");        
+        // success
+        return {
+            status: HttpStatus.OK,
+            message: "article updated successfuly"
+        };
+    };
 }

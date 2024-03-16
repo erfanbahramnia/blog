@@ -39,4 +39,13 @@ export class ArticleResolver {
     ) {
         return await this.articleService.likeArticle(articleId, userId);
     }
+
+    @UseGuards(AuthGuard)
+    @Mutation(returns => SimpleResponse)
+    async dislikeArticle(
+        @Args("articleId", { type: () => Int }) articleId: number,
+        @Context("user") { id: userId }: userTokenData
+    ) {
+        return await this.articleService.dislikeArticle(articleId, userId);
+    }
 }
