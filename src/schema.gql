@@ -81,6 +81,17 @@ type SimpleResponse {
   message: String!
 }
 
+type ArticleObjectType {
+  title: String!
+  description: String!
+  text: String!
+  summary: String!
+  like: [UserInfoInputType!]!
+  dislike: [UserInfoInputType!]!
+  id: Int!
+  user: UserInfoInputType!
+}
+
 type UserResponseData {
   username: String!
   email: String!
@@ -121,6 +132,7 @@ type Query {
   deleteAccount: DeleteUserType!
   getUserArticles: UserArtiles!
   deleteArticle(articleId: Int!): SimpleResponse!
+  getArticles: [ArticleObjectType!]!
   getUsers: [UserDataDto!]!
   getPendingArticles: [GetArticles!]!
   getAcceptedArticles: [GetArticles!]!

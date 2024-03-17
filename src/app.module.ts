@@ -17,6 +17,7 @@ import { join } from 'path';
 // entities
 import { UserEntity } from './user/entity/user.entity';
 import { ArticleEntity } from './article/entity/article.entity';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -51,6 +52,10 @@ import { ArticleEntity } from './article/entity/article.entity';
     }),
     JwtModule.register({
       global: true
+    }),
+    // cache
+    CacheModule.register({
+      isGlobal: true
     })
   ]
 })

@@ -11,13 +11,33 @@ import { AddArticleInputType } from "../dto/article.input-type";
 import { UserService } from "src/user/service/user.service";
 // enums
 import { ArticleStatusEnum } from "src/constants/constants";
+// cache
+import { CACHE_MANAGER } from "@nestjs/cache-manager";
+import { Cache } from "cache-manager";
 
 @Injectable()
 export class ArticleService {
     constructor(
         @InjectRepository(ArticleEntity) private readonly articleRepo: Repository<ArticleEntity>,
-        @Inject(forwardRef(() => UserService)) private readonly userService: UserService
+        @Inject(forwardRef(() => UserService)) private readonly userService: UserService,
+        @Inject(CACHE_MANAGER) private readonly cacheManager: Cache 
     ) {};
+
+    async getArticles() {
+        const articles = await this.articleRepo.createQueryBuilder()
+            .leftJoin("ArticleEntity.user", "writer")
+            .leftJoin("ArticleEntity.like", "likedUsers")
+            .leftJoin("ArticleEntity.dislike", "dislikedUsers")
+            .andWhere("ArticleEntity.status = :status", { status: ArticleStatusEnum.Accepted })
+            .addSelect(["writer.username", "writer.first_name", "writer.last_name", "writer.email"])
+            .addSelect(["likedUsers.username", "likedUsers.first_name", "likedUsers.last_name", "likedUsers.email"])
+            .addSelect(["dislikedUsers.username", "dislikedUsers.first_name", "dislikedUsers.last_name", "dislikedUsers.email"])
+            .getMany();
+        // save in cache
+        const a = await this.cacheManager.set("articles", articles, 60*1000);
+        // success
+        return articles;
+    }
 
     async addArticle(data: AddArticleInputType, userId: number) {
         // find user
@@ -89,7 +109,9 @@ export class ArticleService {
         const res = await this.articleRepo.save(article);
         // check update
         if(res.status !== status)
-            throw new InternalServerErrorException("Couldn't update article")
+            throw new InternalServerErrorException("Couldn't update article");
+        // update cache
+        await this.getArticles();
         // success
         return {
             status: HttpStatus.OK,

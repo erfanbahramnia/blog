@@ -1,22 +1,26 @@
 // nestjs
-import { UseGuards } from "@nestjs/common";
+import { Inject, UseGuards } from "@nestjs/common";
 // services
 import { ArticleService } from "../service/article.service";
 // guards
 import { AuthGuard } from "src/guards/auth.guard";
 // graphql
-import { Args, Context, Int, Mutation, Resolver } from "@nestjs/graphql";
+import { Args, Context, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
 // garphql object type
-import { SimpleResponse } from "../dto/article.object-type";
+import { ArticleObjectType, SimpleResponse } from "../dto/article.object-type";
 // garphql input types
 import { AddArticleInputType } from "../dto/article.input-type";
 // interfaces
 import { userTokenData } from "src/interface/user.interface";
+// cache
+import { CACHE_MANAGER } from "@nestjs/cache-manager";
+import { Cache } from "cache-manager";
 
 @Resolver()
 export class ArticleResolver {
     constructor(
-        private readonly articleService: ArticleService
+        private readonly articleService: ArticleService,
+        @Inject(CACHE_MANAGER) private readonly cacheManager: Cache
     ) {}
 
     @UseGuards(AuthGuard)
@@ -47,5 +51,17 @@ export class ArticleResolver {
         @Context("user") { id: userId }: userTokenData
     ) {
         return await this.articleService.dislikeArticle(articleId, userId);
+    }
+
+    // get accepted articles to users
+    @Query(returns => [ArticleObjectType])
+    async getArticles() {
+        // check cache exist
+        const cached = await this.cacheManager.get("articles");
+        if(cached) 
+            // send via cache
+            return cached;
+        // get articles
+        return await this.articleService.getArticles()
     }
 }
